@@ -2,7 +2,7 @@
 
 Input: H&E images with spot coordinates.
 
-For each spot (~55 μm in diameter), the goal is to predict the abundances of 35 cell types using image data alone.
+For each spot (~55 μm in diameter), the goal is to predict the abundances (deconvolution estimates) of 35 cell types using image data alone.
 
 For each spot, 224x224 patches were extracted centering these spots and used as inputs to the models.
 
@@ -53,10 +53,15 @@ valid_transforms = A.Compose([
 
 Also random CutMix applied to stabilize the training and increase the generalizability.
 
-**Loss function:** rankdata(row) / len(labels) with L1Loss and sigmoid output.
+**Loss function:** Target cell type abundances for each spot were first rank-transformed and scaled to [0,1]. This approach helps normalize the target distributions across different spots/slides, makes the model less sensitive to extreme outlier values in abundances, and focuses the learning on the relative ordering of cell type prevalence. L1Loss was then applied to these transformed targets, with a Sigmoid activation on the model's output layer.
+
 **Metric:** Spearman's Rank Correlation
+
 **Validation:** Each slide used as validation. (Leave-one-out validation.)
+
 **Models used**: Convnext-tiny, efficientnet_v2_m, resnext, regnet, swin transformers
+
+**Optimizer and scheduler**: AdamW optimizer and CosineAnnealingLR Scheduler.
 
 **Methods that did not work:**
 * Using differentiable version of spearmans rank corr. as loss function
