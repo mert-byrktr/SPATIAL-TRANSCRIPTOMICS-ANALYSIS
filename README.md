@@ -72,3 +72,4 @@ Also random CutMix applied to stabilize the training and increase the generaliza
 * Sqrt - log1p transformation on targets
 * Treating target as probability distribution and using KL-Divergence as loss.
 * Normalizing targets
+* Stochastic Weight Averaging and EMA
